@@ -8,6 +8,7 @@ import com.tibaut.urlshortener.repository.UrlRepository;
 import com.tibaut.urlshortener.util.Base62;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class UrlService {
     private final UrlRepository urlRepository;
+    private final StringRedisTemplate redisTemplate;
 
     public ShortenResponse shortenUrl(ShortenRequest request, String baseUrl) {
         Url url = Url.builder()
