@@ -20,8 +20,6 @@ A production-ready URL shortener built with Spring Boot, utilizing a PostgreSQL 
    ```bash
    docker compose up -d
 
-   Your markdown editor is aggressively auto-linking the URL inside the JSON code block. Use the copy button on the block below to grab the raw text and prevent the extra brackets:
-
 ```markdown
 # URL Shortener & Analytics API
 
