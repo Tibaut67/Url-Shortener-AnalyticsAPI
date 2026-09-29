@@ -1,6 +1,7 @@
 package com.tibaut.urlshortener.controller;
 
 
+import com.tibaut.urlshortener.dto.AnalyticsResponse;
 import com.tibaut.urlshortener.dto.ShortenRequest;
 import com.tibaut.urlshortener.dto.ShortenResponse;
 import com.tibaut.urlshortener.service.UrlService;
@@ -18,18 +19,26 @@ public class UrlController {
     private final UrlService urlService;
 
     @PostMapping("/api/v1/urls")
-    public ResponseEntity<ShortenResponse> createShortUrl(@Valid @RequestBody ShortenRequest request, HttpServletRequest servletRequest) {
+    public ResponseEntity<ShortenResponse> createShortUrl(
+            @Valid @RequestBody ShortenRequest request,
+            HttpServletRequest servletRequest) {
         String baseUrl = servletRequest.getRequestURL().toString()
                 .replace(servletRequest.getRequestURI(), "");
-        ShortenResponse response = urlService.shortenUrl(request, baseUrl);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(urlService.shortenUrl(request, baseUrl));
     }
 
     @GetMapping("/{shortCode}")
-    public ResponseEntity<Void> getShortUrl(@PathVariable String shortCode) {
-
+    public ResponseEntity<Void> redirectToUrl(
+            @PathVariable String shortCode,
+            HttpServletRequest servletRequest) {
+        String targetUrl = urlService.getOriginalUrlAndTrackClick(shortCode, servletRequest);
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(urlService.getOriginalUrl(shortCode)))
+                .location(URI.create(targetUrl))
                 .build();
+    }
+
+    @GetMapping("/api/v1/urls/{shortCode}/analytics")
+    public ResponseEntity<AnalyticsResponse> getUrlAnalytics(@PathVariable String shortCode) {
+        return ResponseEntity.ok(urlService.getAnalytics(shortCode));
     }
 }
